@@ -19,13 +19,13 @@ default: &default
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: cristobal
-  password: password123
+  password: password
   host: localhost
   port: 5432
+  database: lab_05_development
 
 development:
   <<: *default
-  database: whats_new_development
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.

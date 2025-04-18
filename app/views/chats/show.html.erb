@@ -1,0 +1,14 @@
+<h1>Chat Details</h1>
+
+<p><strong>Sender:</strong> <%= @chat.sender.email %></p>
+<p><strong>Receiver:</strong> <%= @chat.receiver.email %></p>
+<p><strong>Created At:</strong> <%= @chat.created_at %></p>
+
+<h3>Messages in this chat:</h3>
+<ul>
+  <% @chat.messages.each do |message| %>
+    <li><%= message.body %> (by <%= message.user.email %>)</li>
+  <% end %>
+</ul>
+
+<%= link_to 'Back to Chats', chats_path %>
