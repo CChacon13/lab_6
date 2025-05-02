@@ -1,0 +1,27 @@
+<h1>New Message</h1>
+
+<%= form_with(model: @message, local: true) do |f| %>
+  <% if @message.errors.any? %>
+    <div class="alert alert-danger">
+      <ul>
+        <% @message.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :chat_id, "Chat" %>
+    <%= f.select :chat_id, Chat.all.map { |c| ["Chat ##{c.id}", c.id] }, {}, class: "form-select" %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :user_id, "Author" %>
+    <%= f.select :user_id, User.all.map { |u| [u.email, u.id] }, {}, class: "form-select" %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :body, "Message" %>
+    <%= f.text_area :body, class: "form-control" %>
+  </div>
+  <%= f.submit 'Send Message', class: "btn btn-primary" %>
+<% end %>
