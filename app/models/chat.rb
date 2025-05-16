@@ -5,4 +5,13 @@ class Chat < ApplicationRecord
     belongs_to :sender, class_name: 'User', foreign_key: 'sender_id'
     belongs_to :receiver, class_name: 'User', foreign_key: 'receiver_id'
     has_many :messages, dependent: :destroy
+
+    private
+    def different_users
+        return unless sender && receiver
+
+        if sender == receiver
+            error.add(:base, "Sender and receiver must be different users")
+        end
+    end
 end
