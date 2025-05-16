@@ -1,0 +1,34 @@
+<h1>Editing Chat #<%= @chat.id %></h1>
+
+<%= form_with(model: @chat, local: true) do |f| %>
+  <% if @chat.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading">
+        <%= pluralize(@chat.errors.count, "error") %> prohibited this chat from being saved:
+      </h4>
+      <ul>
+        <% @chat.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :sender_id, "Sender", class: "form-label" %>
+    <%= f.select :sender_id, User.all.map { |u| [u.email, u.id] }, { selected: @chat.sender_id }, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :receiver_id, "Receiver", class: "form-label" %>
+    <%= f.select :receiver_id, User.all.map { |u| [u.email, u.id] }, { selected: @chat.receiver_id }, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.submit "Update Chat", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<hr>
+<%= link_to 'Show this chat', @chat, class: 'btn btn-secondary btn-sm' %> |
+<%= link_to 'Back to chats', chats_path, class: 'btn btn-light btn-sm' %>

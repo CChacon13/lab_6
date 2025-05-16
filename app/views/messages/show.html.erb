@@ -1,8 +1,28 @@
 <h1>Message Details</h1>
 
-<p><strong>Chat ID:</strong> <%= @message.chat_id %></p>
-<p><strong>User:</strong> <%= @message.user.email %></p>
-<p><strong>Body:</strong> <%= @message.body %></p>
-<p><strong>Created At:</strong> <%= @message.created_at %></p>
+<div class="card">
+  <div class="card-body">
+    <p class="card-text">
+      <strong>From User:</strong>
+      <%= link_to @message.user.email, user_path(@message.user) %>
+    </p>
+    <p class="card-text">
+      <strong>In Chat:</strong>
+      <%# Asumiendo que un chat se identifica bien por su ID y los participantes %>
+      <%= link_to "Chat ##{@message.chat_id} (between #{@message.chat.sender.email} and #{@message.chat.receiver.email})", chat_path(@message.chat) %>
+    </p>
+    <p class="card-text">
+      <strong>Body:</strong>
+    </p>
+    <blockquote class="blockquote">
+      <p><%= @message.body %></p>
+    </blockquote>
+    <p class="card-text">
+      <small class="text-muted">Sent At: <%= @message.created_at.strftime("%B %d, %Y %H:%M") %></small>
+    </p>
+  </div>
+</div>
 
-<%= link_to 'Back to Messages', messages_path %>
+<hr>
+<%= link_to 'Edit this message', edit_message_path(@message), class: 'btn btn-primary btn-sm' %> |
+<%= link_to 'Back to messages', messages_path, class: 'btn btn-light btn-sm' %>

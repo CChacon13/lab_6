@@ -1,0 +1,50 @@
+<h1>Editing Message</h1>
+
+<%= form_with(model: @message, local: true) do |f| %>
+  <% if @message.errors.any? %>
+    <div class="alert alert-danger">
+      <h4 class="alert-heading">
+        <%= pluralize(@message.errors.count, "error") %> prohibited this message from being saved:
+      </h4>
+      <ul>
+        <% @message.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%# Los campos para chat_id y user_id generalmente no se editan. %>
+  <%# Si necesitas que sean editables, puedes descomentarlos y ajustar message_params_for_update en el controlador. %>
+  <%#
+  <div class="mb-3">
+    <%= f.label :chat_id, "Chat", class: "form-label" %>
+    <%= f.select :chat_id, Chat.all.map { |c| ["Chat ##{c.id} (Sender: #{c.sender.email}, Receiver: #{c.receiver.email})", c.id] }, { selected: @message.chat_id }, class: "form-select", disabled: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :user_id, "Author", class: "form-label" %>
+    <%= f.select :user_id, User.all.map { |u| [u.email, u.id] }, { selected: @message.user_id }, class: "form-select", disabled: true %>
+  </div>
+  %>
+
+  <p>
+    <strong>Chat:</strong> <%= link_to "Chat ##{@message.chat_id}", chat_path(@message.chat) %>
+  </p>
+  <p>
+    <strong>Author:</strong> <%= link_to @message.user.email, user_path(@message.user) %>
+  </p>
+
+  <div class="mb-3">
+    <%= f.label :body, "Message Body", class: "form-label" %>
+    <%= f.text_area :body, class: "form-control", rows: 4 %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.submit "Update Message", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<hr>
+<%= link_to 'Show this message', @message, class: 'btn btn-secondary btn-sm' %> |
+<%= link_to 'Back to messages', messages_path, class: 'btn btn-light btn-sm' %>

@@ -1,7 +1,75 @@
-<h1>User Details</h1>
+<%# Asegúrate de que @user esté definido en tu UsersController#show %>
+<%# ej: @user = User.find(params[:id]) %>
 
-<p><strong>First Name:</strong> <%= @user.first_name %></p>
-<p><strong>Last Name:</strong> <%= @user.last_name %></p>
-<p><strong>Email:</strong> <%= @user.email %></p>
+<h1>User Details: <%= @user.first_name %> <%= @user.last_name %></h1>
 
-<%= link_to 'Back to Users', users_path %>
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="card-title">Information</h5>
+    <p class="card-text">
+      <strong>First Name:</strong> <%= @user.first_name %>
+    </p>
+    <p class="card-text">
+      <strong>Last Name:</strong> <%= @user.last_name %>
+    </p>
+    <p class="card-text">
+      <strong>Email:</strong> <%= @user.email %>
+    </p>
+    <p class="card-text">
+      <strong>Joined:</strong> <%= @user.created_at.strftime("%B %d, %Y") %>
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Chats (<%= @user.sent_chats.count + @user.received_chats.count %>)</h5>
+        <% chats = (@user.sent_chats.includes(:sender, :receiver) + @user.received_chats.includes(:sender, :receiver)).uniq.sort_by(&:created_at).reverse %>
+        <% if chats.any? %>
+          <ul class="list-group list-group-flush">
+            <% chats.each do |chat| %>
+              <li class="list-group-item">
+                <%= link_to "Chat ##{chat.id} (with #{chat.sender == @user ? chat.receiver.email : chat.sender.email})", chat_path(chat) %>
+                <small class="text-muted d-block">Created: <%= chat.created_at.strftime("%Y-%m-%d %H:%M") %></small>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="card-text">This user is not participating in any chats yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Messages Sent (<%= @user.messages.count %>)</h5>
+        <% if @user.messages.any? %>
+          <ul class="list-group list-group-flush">
+            <% @user.messages.order(created_at: :desc).take(10).each do |message| %> <%# Muestra los últimos 10 mensajes %>
+              <li class="list-group-item">
+                <p class="mb-1"><em><%= link_to "In Chat ##{message.chat_id}", chat_path(message.chat) %>:</em></p>
+                <p class="mb-1">"<%= message.body %>"</p>
+                <small class="text-muted">Sent: <%= message.created_at.strftime("%Y-%m-%d %H:%M") %></small>
+              </li>
+            <% end %>
+            <% if @user.messages.count > 10 %>
+              <li class="list-group-item text-center">
+                <%= link_to "View all messages by this user...", messages_path(user_id: @user.id) %> <%# Asume que puedes filtrar mensajes por user_id en el index de mensajes %>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p class="card-text">This user has not sent any messages yet.</p>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr>
+<%= link_to 'Edit this user', edit_user_path(@user), class: 'btn btn-primary btn-sm' %> |
+<%= link_to 'Back to users', users_path, class: 'btn btn-light btn-sm' %>

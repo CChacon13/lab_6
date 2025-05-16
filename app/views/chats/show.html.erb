@@ -1,14 +1,53 @@
-<h1>Chat Details</h1>
+<h1>Chat Details: #<%= @chat.id %></h1>
 
-<p><strong>Sender:</strong> <%= @chat.sender.email %></p>
-<p><strong>Receiver:</strong> <%= @chat.receiver.email %></p>
-<p><strong>Created At:</strong> <%= @chat.created_at %></p>
+<div class="card mb-3">
+  <div class="card-header">
+    Chat Information
+  </div>
+  <div class="card-body">
+    <p class="card-text">
+      <strong>Sender:</strong> <%= link_to @chat.sender.email, user_path(@chat.sender) %>
+    </p>
+    <p class="card-text">
+      <strong>Receiver:</strong> <%= link_to @chat.receiver.email, user_path(@chat.receiver) %>
+    </p>
+    <p class="card-text">
+      <strong>Created At:</strong> <%= @chat.created_at.strftime("%B %d, %Y %H:%M") %>
+    </p>
+  </div>
+</div>
 
-<h3>Messages in this chat:</h3>
-<ul>
-  <% @chat.messages.each do |message| %>
-    <li><%= message.body %> (by <%= message.user.email %>)</li>
-  <% end %>
-</ul>
+<div class="card">
+  <div class="card-header">
+    Messages in this chat (<%= @chat.messages.count %>)
+  </div>
+  <div class="card-body">
+    <% if @chat.messages.any? %>
+      <ul class="list-group list-group-flush">
+        <% @chat.messages.order(created_at: :asc).each do |message| %>
+          <li class="list-group-item">
+            <div class="d-flex w-100 justify-content-between">
+              <h6 class="mb-1">
+                <%= link_to message.user.email, user_path(message.user) %>
+                <% if message.user == @chat.sender %>
+                  <span class="badge bg-primary rounded-pill ms-1">Sender</span>
+                <% elsif message.user == @chat.receiver %>
+                  <span class="badge bg-info rounded-pill ms-1">Receiver</span>
+                <% end %>
+              </h6>
+              <small><%= message.created_at.strftime("%Y-%m-%d %H:%M") %></small>
+            </div>
+            <p class="mb-1"><%= message.body %></p>
+            <small><%= link_to 'View message details', message_path(message) %></small>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="card-text">No messages in this chat yet.</p>
+    <% end %>
+  </div>
+</div>
 
-<%= link_to 'Back to Chats', chats_path %>
+<hr>
+<%= link_to 'Edit this chat', edit_chat_path(@chat), class: 'btn btn-primary btn-sm' %> |
+<%= link_to 'Back to chats', chats_path, class: 'btn btn-light btn-sm' %>
