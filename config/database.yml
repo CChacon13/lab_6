@@ -18,11 +18,9 @@ default: &default
   # For details on connection pooling, see Rails configuration guide
   # https://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: cristobal
-  password: password
   host: localhost
   port: 5432
-  database: lab_05_development
+  database: lab_06_development
 
 development:
   <<: *default
@@ -85,7 +83,7 @@ production:
   primary: &primary_production
     <<: *default
     database: whats_new_production
-    username: whats_new
+    username: <%= ENV["WHATS_NEW_DATABASE_USERNAME"] %>
     password: <%= ENV["WHATS_NEW_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production

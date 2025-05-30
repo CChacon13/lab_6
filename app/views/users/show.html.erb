@@ -1,6 +1,3 @@
-<%# Asegúrate de que @user esté definido en tu UsersController#show %>
-<%# ej: @user = User.find(params[:id]) %>
-
 <h1>User Details: <%= @user.first_name %> <%= @user.last_name %></h1>
 
 <div class="card mb-3">
@@ -49,7 +46,7 @@
         <h5 class="card-title">Messages Sent (<%= @user.messages.count %>)</h5>
         <% if @user.messages.any? %>
           <ul class="list-group list-group-flush">
-            <% @user.messages.order(created_at: :desc).take(10).each do |message| %> <%# Muestra los últimos 10 mensajes %>
+            <% @user.messages.order(created_at: :desc).take(10).each do |message| %>
               <li class="list-group-item">
                 <p class="mb-1"><em><%= link_to "In Chat ##{message.chat_id}", chat_path(message.chat) %>:</em></p>
                 <p class="mb-1">"<%= message.body %>"</p>
@@ -58,7 +55,7 @@
             <% end %>
             <% if @user.messages.count > 10 %>
               <li class="list-group-item text-center">
-                <%= link_to "View all messages by this user...", messages_path(user_id: @user.id) %> <%# Asume que puedes filtrar mensajes por user_id en el index de mensajes %>
+                <%= link_to "View all messages by this user...", messages_path(user_id: @user.id) %>
               </li>
             <% end %>
           </ul>
@@ -71,5 +68,13 @@
 </div>
 
 <hr>
-<%= link_to 'Edit this user', edit_user_path(@user), class: 'btn btn-primary btn-sm' %> |
+
+<% if can? :update, @user %>
+  <%= link_to 'Edit this user', edit_user_path(@user), class: 'btn btn-primary btn-sm' %> |
+<% end %>
+
+<% if can? :destroy, @user %>
+  <%= link_to 'Delete this user', user_path(@user), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %> |
+<% end %>
+
 <%= link_to 'Back to users', users_path, class: 'btn btn-light btn-sm' %>

@@ -1,20 +1,21 @@
 class ChatsController < ApplicationController
-  before_action :set_chat, only: [:show, :edit, :update] 
+  before_action :authenticate_user!
+  load_and_authorize_resource
 
   def index
-    @chats = Chat.all.includes(:sender, :receiver)
+    @chats = @chats.includes(:sender, :receiver)
   end
-  
+
   def show
   end
-  
+
   def new
-    @chat = Chat.new
   end
 
   def create
     @chat = Chat.new(chat_params)
-    if @chat.sender_id.present? && @chat.receiver_id.present? && @chat.sender_id == @chat.receiver_id
+    @chat.sender = current_user
+    if @chat.receiver_id.present? && @chat.sender_id == @chat.receiver_id
       @chat.errors.add(:receiver_id, "must be different from sender")
       render :new, status: :unprocessable_entity
     elsif @chat.save
@@ -28,9 +29,8 @@ class ChatsController < ApplicationController
   end
 
   def update
-    @chat.assign_attributes(chat_params_for_update)
-
-    if @chat.sender_id.present? && @chat.receiver_id.present? && @chat.sender_id == @chat.receiver_id
+    @chat.assign_attributes(chat_params)
+    if @chat.receiver_id.present? && @chat.sender_id == @chat.receiver_id
       @chat.errors.add(:receiver_id, "must be different from sender")
       render :edit, status: :unprocessable_entity
     elsif @chat.save
@@ -42,15 +42,7 @@ class ChatsController < ApplicationController
 
   private
 
-  def set_chat
-    @chat = Chat.find(params[:id])
-  end
-
   def chat_params
-    params.require(:chat).permit(:sender_id, :receiver_id)
-  end
-
-  def chat_params_for_update
-    params.require(:chat).permit(:sender_id, :receiver_id)
+    params.require(:chat).permit(:receiver_id)
   end
 end

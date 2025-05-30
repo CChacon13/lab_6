@@ -8,7 +8,6 @@
     </p>
     <p class="card-text">
       <strong>In Chat:</strong>
-      <%# Asumiendo que un chat se identifica bien por su ID y los participantes %>
       <%= link_to "Chat ##{@message.chat_id} (between #{@message.chat.sender.email} and #{@message.chat.receiver.email})", chat_path(@message.chat) %>
     </p>
     <p class="card-text">
@@ -24,5 +23,13 @@
 </div>
 
 <hr>
-<%= link_to 'Edit this message', edit_message_path(@message), class: 'btn btn-primary btn-sm' %> |
+
+<% if can? :update, @message %>
+  <%= link_to 'Edit this message', edit_message_path(@message), class: 'btn btn-primary btn-sm' %> |
+<% end %>
+
+<% if can? :destroy, @message %>
+  <%= link_to 'Delete this message', message_path(@message), method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-sm' %> |
+<% end %>
+
 <%= link_to 'Back to messages', messages_path, class: 'btn btn-light btn-sm' %>

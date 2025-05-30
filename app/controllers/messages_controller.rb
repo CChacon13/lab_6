@@ -1,19 +1,20 @@
 class MessagesController < ApplicationController
-  before_action :set_message, only: [:show, :edit, :update]
+  before_action :authenticate_user!
+  load_and_authorize_resource
 
   def index
-    @messages = Message.all.includes(:user, :chat)
+    @messages = @messages.includes(:user, :chat)
   end
-  
+
   def show
   end
-  
+
   def new
-    @message = Message.new
   end
 
   def create
     @message = Message.new(message_params)
+    @message.user = current_user
     if @message.save
       redirect_to messages_path, notice: 'Message created successfully.'
     else
@@ -34,12 +35,8 @@ class MessagesController < ApplicationController
 
   private
 
-  def set_message
-    @message = Message.find(params[:id])
-  end
-
   def message_params
-    params.require(:message).permit(:chat_id, :user_id, :body)
+    params.require(:message).permit(:chat_id, :body)
   end
 
   def message_params_for_update
